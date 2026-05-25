@@ -1,0 +1,6 @@
+[submodule "third_party/hnswlib"]
+	path = third_party/hnswlib
+	url = https://github.com/nmslib/hnswlib
+[submodule "third_party/BM25"]
+	path = third_party/BM25
+	url = https://github.com/scorta/BM25

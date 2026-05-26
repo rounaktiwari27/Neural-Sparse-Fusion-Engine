@@ -13,8 +13,8 @@ def load_models():
 
 bi_encoder, reranker = load_models()
 
-st.set_page_config(page_title="Dual Stage Retriever", layout="wide")
-st.title("⚡ Dual Stage Retriever")
+st.set_page_config(page_title="Neural-Sparse Fusion Engine", layout="wide")
+st.title("⚡ Neural-Sparse Fusion Engine")
 
 # --- SIDEBAR: DOCUMENT INGESTION ---
 st.sidebar.header("📂 Document Ingestion")
@@ -57,7 +57,7 @@ query = st.text_input("🔍 Semantic Search Query:")
 
 # Display a clean dashboard warning if no data is loaded yet
 if not os.path.exists("data/corpus.json") or not uploaded_files:
-    st.info("👋 Welcome to Dual Stage Retriever. Please upload your .txt corpora in the sidebar to initialize the C++ Engine.")
+    st.info("👋 Welcome to the Neural-Sparse Fusion Engine. Please upload your .txt corpora in the sidebar to initialize the C++ backend.")
 
 elif st.button("Execute Search") and query:
     # 1. PREPARE THE HANDOFF FOR C++

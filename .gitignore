@@ -67,3 +67,9 @@ vcpkg_installed/
 # test output & cache
 Testing/
 .cache/
+data/
+hybrid_engine
+include/BM25
+venv/
+__pycache__/
+*.DS_Store

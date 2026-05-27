@@ -12,7 +12,7 @@ This project intentionally bypasses high-level AI wrappers (like LangChain) and 
 
 ---
 
-## 🏗️ System Architecture & Data Flow
+## System Architecture & Data Flow
 
 Standard keyword searches fail to understand context, while standard vector searches often miss hyper-specific nouns. This architecture guarantees that both specific lexical keywords and ambiguous semantic queries are retrieved accurately before being reranked by a deep neural network.
 
@@ -48,7 +48,7 @@ graph TD
 
 ---
 
-## 🧠 Technical Approach
+## Technical Approach
 
 ### 1. Memory-Locked Ingestion
 Python reads massive `.txt` files, generates 384-dimensional mathematical vectors using a HuggingFace Bi-Encoder, and locks the dataset into RAM to prevent redundant processing.
@@ -70,7 +70,7 @@ A Python Cross-Encoder neural network reads the top candidates, evaluates their 
 
 ---
 
-## 🧮 Algorithmic Engine (Under the Hood)
+## Algorithmic Engine (Under the Hood)
 
 ### The Sparse Index (BM25)
 Implemented in C++, this handles exact-keyword matching and penalizes overly common stop-words using Term Frequency-Inverse Document Frequency (TF-IDF) logic.
@@ -87,7 +87,7 @@ $$RRF = \frac{1}{k + R_{BM25}} + \frac{1}{k + R_{HNSW}}$$
 
 ---
 
-## 🔌 JSON IPC Protocol (Internal API)
+## JSON IPC Protocol (Internal API)
 
 Because Python and C++ run in completely separate memory spaces, they communicate strictly through serialized JSON.
 
@@ -114,7 +114,7 @@ Because Python and C++ run in completely separate memory spaces, they communicat
 
 ---
 
-## 🚀 Quick Start (Local Setup Guide)
+## Quick Start (Local Setup Guide)
 
 ### 1. Clone the repository
 ```bash
@@ -137,15 +137,15 @@ streamlit run app.py
 
 ---
 
-## ⚖️ Architectural Evaluation & Roadmap
+## Architectural Evaluation & Roadmap
 
-### ✅ System Merits
+### System Merits
 
 - **Flawless Contextual Recall:** The dense vector HNSW graph maps abstract themes to contextual paragraphs without relying on exact keywords.
 - **Resilient Memory Management:** Dynamic `st.session_state` locking allows massive multi-document ingestion without crashing the Streamlit UI.
 - **Blazing Fast Local Execution:** The C++ binary executes $O(\log N)$ spatial navigation strictly on local CPU hardware.
 
-### ⚠️ Engineering Bottlenecks (Future Scaling)
+### Engineering Bottlenecks (Future Scaling)
 
 - **Dynamic Graph Latency:** The C++ engine currently rebuilds the HNSW graph dynamically in RAM from scratch for every search. Production systems must serialize this graph to a `.bin` file for $O(1)$ memory loading to achieve sub-second latency.
 - **Model Dimensionality Limits:** The system uses a 384-dimensional MiniLM model to allow local CPU execution. Enterprise scaling requires upgrading to a 1536D embedding model.

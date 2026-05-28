@@ -150,3 +150,9 @@ streamlit run app.py
 - **Dynamic Graph Latency:** The C++ engine currently rebuilds the HNSW graph dynamically in RAM from scratch for every search. Production systems must serialize this graph to a `.bin` file for $O(1)$ memory loading to achieve sub-second latency.
 - **Model Dimensionality Limits:** The system uses a 384-dimensional MiniLM model to allow local CPU execution. Enterprise scaling requires upgrading to a 1536D embedding model.
 - **Cloud Hosting Constraints:** Deploying this specific architecture to a 512MB free-tier cloud server (e.g., Vercel) will trigger an Out-Of-Memory (OOM) crash due to the heavy RAM requirement of local vector graph construction.
+
+## Demo Video
+
+Watch the project demo here:  
+https://drive.google.com/drive/folders/1yys2Qu51bVy6eyIwXOOof7j8NCddDCy8
+

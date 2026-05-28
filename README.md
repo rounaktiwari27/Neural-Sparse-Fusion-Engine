@@ -12,9 +12,23 @@ This project intentionally bypasses high-level AI wrappers (like LangChain) and 
 
 ---
 
+## Key Features
+
+- Hybrid Sparse + Dense Retrieval Pipeline
+- Custom C++ Retrieval Microservice
+- Python ↔ C++ JSON IPC Communication
+- BM25 Lexical Search Engine
+- HNSW Approximate Nearest Neighbor Search
+- Cross-Encoder Neural Reranking
+- Fully Local CPU-Based Execution
+- Multi-Document Semantic Search
+- Streamlit Interactive Dashboard
+
+---
+
 ## System Architecture & Data Flow
 
-Standard keyword searches fail to understand context, while standard vector searches often miss hyper-specific nouns. This architecture guarantees that both specific lexical keywords and ambiguous semantic queries are retrieved accurately before being reranked by a deep neural network.
+Standard keyword searches fail to understand context, while standard vector searches often miss hyper-specific nouns. This architecture guarantees that both specific lexical keywords and ambiguous semantic queries are retrieved efficiently before being reranked by a deep neural network.
 
 ```mermaid
 graph TD
@@ -50,8 +64,8 @@ graph TD
 
 ## Technical Approach
 
-### 1. Memory-Locked Ingestion
-Python reads massive `.txt` files, generates 384-dimensional mathematical vectors using a HuggingFace Bi-Encoder, and locks the dataset into RAM to prevent redundant processing.
+### 1. Embedding & Document Ingestion
+Python reads large `.txt` files, generates 384-dimensional embeddings using a HuggingFace Bi-Encoder, and caches the processed chunks in memory to avoid redundant computation.
 
 ### 2. The IPC Bridge
 Python serializes the user's query into JSON and hands it off to a compiled C++ binary running in a completely separate memory space.
@@ -60,20 +74,20 @@ Python serializes the user's query into JSON and hands it off to a compiled C++ 
 The C++ microservice runs the query against two distinct indexes simultaneously:
 
 - **Sparse Index (BM25):** Hunts for exact keyword matches (e.g., character names, dates).
-- **Dense Index (HNSW):** Navigates a mathematical graph to find semantic "vibes" and context.
+- **Dense Index (HNSW):** Navigates a mathematical graph to retrieve semantically related contextual passages.
 
 ### 4. Mathematical Fusion (RRF)
 C++ combines the scores from both indexes using Reciprocal Rank Fusion and sends the top candidates back to Python.
 
 ### 5. Deep Reranking
-A Python Cross-Encoder neural network reads the top candidates, evaluates their exact narrative relationship to the query, and outputs the absolute best matches to the UI.
+A Python Cross-Encoder neural network reranks the retrieved candidates by evaluating the semantic relationship between the query and each passage before returning the most relevant matches to the UI.
 
 ---
 
 ## Algorithmic Engine (Under the Hood)
 
 ### The Sparse Index (BM25)
-Implemented in C++, this handles exact-keyword matching and penalizes overly common stop-words using Term Frequency-Inverse Document Frequency (TF-IDF) logic.
+Implemented in C++, BM25 performs probabilistic lexical ranking using term frequency, inverse document frequency, and document-length normalization.
 
 ### The Dense Index (HNSW Graph)
 Semantic similarity is calculated using a Hierarchical Navigable Small World (HNSW) graph dynamically constructed in RAM via `hnswlib`. Distances are computed using the L2 (Euclidean) metric across a 384-dimensional space:
@@ -118,8 +132,8 @@ Because Python and C++ run in completely separate memory spaces, they communicat
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/rounaktiwari27/cpp-search-engine.git
-cd cpp-search-engine
+git clone https://github.com/rounaktiwari27/Neural-Sparse-Fusion-Engine.git
+cd Neural-Sparse-Fusion-Engine
 ```
 
 ### 2. Run the automated build script
@@ -141,15 +155,15 @@ streamlit run app.py
 
 ### System Merits
 
-- **Flawless Contextual Recall:** The dense vector HNSW graph maps abstract themes to contextual paragraphs without relying on exact keywords.
+- **Improved semantic retrieval for abstract queries:** The dense vector HNSW graph maps abstract themes to contextual paragraphs without relying on exact keywords.
 - **Resilient Memory Management:** Dynamic `st.session_state` locking allows massive multi-document ingestion without crashing the Streamlit UI.
-- **Blazing Fast Local Execution:** The C++ binary executes $O(\log N)$ spatial navigation strictly on local CPU hardware.
+- **Blazing Fast Local Execution:** The C++ binary enables highly efficient approximate nearest-neighbor search on local CPU hardware.
 
 ### Engineering Bottlenecks (Future Scaling)
 
 - **Dynamic Graph Latency:** The C++ engine currently rebuilds the HNSW graph dynamically in RAM from scratch for every search. Production systems must serialize this graph to a `.bin` file for $O(1)$ memory loading to achieve sub-second latency.
-- **Model Dimensionality Limits:** The system uses a 384-dimensional MiniLM model to allow local CPU execution. Enterprise scaling requires upgrading to a 1536D embedding model.
-- **Cloud Hosting Constraints:** Deploying this specific architecture to a 512MB free-tier cloud server (e.g., Vercel) will trigger an Out-Of-Memory (OOM) crash due to the heavy RAM requirement of local vector graph construction.
+- **Model Dimensionality Limits:** The system uses a 384-dimensional MiniLM model to allow local CPU execution. Higher-capacity embedding models could further improve semantic retrieval quality at the cost of increased memory and compute usage.
+- **Cloud Hosting Constraints:** Deploying this architecture on low-memory free-tier cloud environments may lead to Out-Of-Memory (OOM) issues because the vector graph and embedding models are loaded directly into RAM.
 
 ## Demo Video
 

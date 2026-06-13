@@ -1,4 +1,4 @@
-# ⚡ Neural-Sparse Fusion Engine (Dual-Stage RAG)
+# ⚡ Neural-Sparse-Fusion-Engine (Dual-Stage RAG)
 
 ![C++17](https://img.shields.io/badge/C++-17-blue.svg?style=for-the-badge&logo=c%2B%2B)
 ![Python 3.9+](https://img.shields.io/badge/Python-3.9+-yellow.svg?style=for-the-badge&logo=python)
